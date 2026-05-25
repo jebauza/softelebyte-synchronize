@@ -17,12 +17,22 @@ Combines synchronization engine, extended query builder, Eloquent relationship j
 "repositories": [
     {
         "type": "vcs",
-        "url": "https://github.com/YOUR_USERNAME/softelebyte-synchronize"
+        "url": "https://github.com/jebauza/softelebyte-synchronize"
     }
 ]
 ```
 
-### 2. Install the package
+### 2. Authenticate with GitHub (private repository)
+
+If this is your first time installing on a machine, configure your GitHub token so Composer can access the private repository:
+
+```bash
+composer config --global github-oauth.github.com YOUR_GITHUB_TOKEN
+```
+
+> You can generate a token at GitHub → Settings → Developer settings → Personal access tokens.
+
+### 3. Install the package
 
 ```bash
 composer require softelebyte/softelebyte-synchronize
@@ -30,7 +40,7 @@ composer require softelebyte/softelebyte-synchronize
 
 Laravel auto-discovers and registers all Service Providers.
 
-### 3. Publish the configuration
+### 4. Publish the configuration
 
 ```bash
 php artisan vendor:publish --tag=synchronize-config
@@ -38,13 +48,39 @@ php artisan vendor:publish --tag=synchronize-config
 
 This creates `config/synchronize.php` in your project.
 
-### 4. Run the migrations
+### 5. Run the migrations
 
 ```bash
 php artisan migrate
 ```
 
 Creates the log tables: `syncs`, `sync_logs`, `sync_errors`, `sync_last_config`, `sync_statuses`.
+
+---
+
+## Quick Setup (copy & paste)
+
+Add to your `composer.json`:
+
+```json
+"repositories": [
+    {
+        "type": "vcs",
+        "url": "https://github.com/jebauza/softelebyte-synchronize"
+    }
+],
+"require": {
+    "softelebyte/softelebyte-synchronize": "^1.0"
+}
+```
+
+Then run:
+
+```bash
+composer install
+php artisan vendor:publish --tag=synchronize-config
+php artisan migrate
+```
 
 ---
 
