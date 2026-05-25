@@ -1,0 +1,42 @@
+{
+  "name": "softelebyte/softelebyte-synchronize",
+  "description": "Paquete unificado de servicios ETL y utilidades de Softelebyte.",
+  "license": "MIT",
+  "type": "library",
+  "authors": [
+    {
+      "name": "Softelebyte",
+      "role": "Developer"
+    }
+  ],
+  "require": {
+    "php": "^8.0",
+    "dyrynda/laravel-model-uuid": "^6.4|^7.0|8.0",
+    "google/analytics-data": "^0.16",
+    "ext-json": "*"
+  },
+  "autoload": {
+    "psr-4": {
+      "Softelebyte\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Softelebyte\\Tests\\": "tests/"
+    }
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Softelebyte\\Synchronize\\Base\\Providers\\SynchronizeDataServiceProvider",
+        "Softelebyte\\Synchronize\\Logs\\Providers\\LogServiceProvider",
+        "Softelebyte\\SoftelebyteJoins\\ServiceProvider\\SoftelebyteJoinsServiceProvider",
+        "Softelebyte\\MigrationBinaryUuid\\ServiceProvider\\SoftelebyteBluePrintServiceProvider",
+        "Softelebyte\\OutputHelper\\ServiceProvider\\OutputHelperServiceProvider",
+        "Softelebyte\\QueryFilters\\QueryFiltersServiceProvider"
+      ]
+    }
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true
+}

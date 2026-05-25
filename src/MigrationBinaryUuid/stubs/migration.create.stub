@@ -1,0 +1,36 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Zeus\MigrationBinaryUuid\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        Schema::create('{{ table }}', function (Blueprint $table) {
+            $table->realBinary('id')->primary();
+            $table->string('name');
+            $table->string('link_id')->unique();
+            $table->boolean('active_etl')->index();
+            $table->boolean('active_be')->index();
+            $table->createdAt();
+            $table->updatedAt();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::dropIfExists('{{ table }}');
+    }
+};

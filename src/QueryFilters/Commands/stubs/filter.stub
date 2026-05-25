@@ -1,0 +1,19 @@
+<?php
+
+namespace {{ namespace }};
+
+use Illuminate\Contracts\Database\Eloquent\Builder;
+use Zeus\QueryFilters\Filters\QueryFilter;
+
+class {{ name }} extends QueryFilter
+{
+    public function defaultField(): ?string
+    {
+        return '{{ field }}';
+    }
+
+    public function apply(Builder $query, mixed $value = null): void
+    {
+        $query->where($this->field(), $value);
+    }
+}
