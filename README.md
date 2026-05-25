@@ -1,148 +1,148 @@
 # softelebyte-synchronize
 
-Paquete unificado de Softelebyte para sincronización ETL de datos en proyectos Laravel.
+Unified Laravel package by Softelebyte for ETL data synchronization.
 
-Integra en un solo paquete instalable los módulos de sincronización, query builder, joins por relaciones, migraciones con UUID binario, filtros de queries y utilidades de consola.
+Combines synchronization engine, extended query builder, Eloquent relationship joins, binary UUID migrations, query filters, and console utilities into a single installable package.
 
-## Requisitos
+## Requirements
 
 - PHP ^8.0
 - Laravel ^10.0
 
-## Instalación
+## Installation
 
-### 1. Agregar el repositorio en `composer.json` de tu proyecto
+### 1. Add the repository to your project's `composer.json`
 
 ```json
 "repositories": [
     {
         "type": "vcs",
-        "url": "https://github.com/TU_USUARIO/softelebyte-synchronize"
+        "url": "https://github.com/YOUR_USERNAME/softelebyte-synchronize"
     }
 ]
 ```
 
-### 2. Instalar el paquete
+### 2. Install the package
 
 ```bash
 composer require softelebyte/softelebyte-synchronize
 ```
 
-Laravel registra los Service Providers automáticamente vía Package Discovery.
+Laravel auto-discovers and registers all Service Providers.
 
-### 3. Publicar la configuración
+### 3. Publish the configuration
 
 ```bash
 php artisan vendor:publish --tag=synchronize-config
 ```
 
-Esto crea el archivo `config/synchronize.php` en tu proyecto.
+This creates `config/synchronize.php` in your project.
 
-### 4. Ejecutar las migraciones
+### 4. Run the migrations
 
 ```bash
 php artisan migrate
 ```
 
-Crea las tablas de logs: `syncs`, `sync_logs`, `sync_errors`, `sync_last_config`, `sync_statuses`.
+Creates the log tables: `syncs`, `sync_logs`, `sync_errors`, `sync_last_config`, `sync_statuses`.
 
 ---
 
-## Módulos incluidos
+## Included Modules
 
-| Namespace | Descripción |
+| Namespace | Description |
 |---|---|
-| `Softelebyte\Synchronize\` | Motor ETL principal |
-| `Softelebyte\Builder\` | Query builder extendido |
-| `Softelebyte\SoftelebyteJoins\` | Joins mediante relaciones Eloquent |
-| `Softelebyte\MigrationBinaryUuid\` | Migraciones con UUID en binario |
-| `Softelebyte\OutputHelper\` | Helper de salida en consola |
-| `Softelebyte\SelectHelper\` | Helper para construcción de selects |
-| `Softelebyte\QueryFilters\` | Filtros de queries reutilizables |
-| `Softelebyte\GoogleAnalytics\` | Conector Google Analytics Data API |
-| `Softelebyte\Stubs\` | Generador de archivos desde stubs |
+| `Softelebyte\Synchronize\` | Core ETL synchronization engine |
+| `Softelebyte\Builder\` | Extended Eloquent query builder |
+| `Softelebyte\SoftelebyteJoins\` | Joins via Eloquent relationships |
+| `Softelebyte\MigrationBinaryUuid\` | Binary UUID migration support |
+| `Softelebyte\OutputHelper\` | Console output helper |
+| `Softelebyte\SelectHelper\` | SQL select builder helper |
+| `Softelebyte\QueryFilters\` | Reusable query filters |
+| `Softelebyte\GoogleAnalytics\` | Google Analytics Data API connector |
+| `Softelebyte\Stubs\` | Stub-based file generator |
 
 ---
 
-## Uso del módulo ETL (Synchronize)
+## Usage
 
-### Comando Artisan
+### Artisan Commands
 
 ```bash
-# Ejecutar todas las sincronizaciones
+# Run all synchronizations
 php artisan synchronize:data
 
-# Ejecutar un grupo específico
-php artisan synchronize:data --group=nombre_grupo
+# Run a specific group
+php artisan synchronize:data --group=group_name
 
-# Ejecutar sincronización para una hora específica
+# Run synchronization for a specific time
 php artisan synchronize:data --synchour=08:00
 
-# Ver la configuración de grupos disponibles
+# Print available group configuration
 php artisan synchronize:print_config
 ```
 
-### Crear una sincronización tabla → tabla
+### Table-to-Table Synchronization
 
 ```php
 use Softelebyte\Synchronize\Base\ValueObjects\Service\SimpleTableValueObject;
 
-class MiSincronizacion extends SimpleTableValueObject
+class MySync extends SimpleTableValueObject
 {
     public function originModel(): string
     {
-        return ModelOrigen::class;
+        return SourceModel::class;
     }
 
     public function targetModel(): string
     {
-        return ModelDestino::class;
+        return TargetModel::class;
     }
 
     public function select(): array
     {
-        return ['id', 'nombre', 'email'];
+        return ['id', 'name', 'email'];
     }
 
     public function selectInsert(): array
     {
-        return ['id', 'nombre', 'email'];
+        return ['id', 'name', 'email'];
     }
 
     public function updateColumns(): array
     {
-        return ['nombre', 'email'];
+        return ['name', 'email'];
     }
 }
 ```
 
-### Crear una sincronización con repositorio personalizado
+### Custom Repository Synchronization
 
 ```php
 use Softelebyte\Synchronize\Base\ValueObjects\Service\RepoValueObject;
 
-class MiSincronizacionRepo extends RepoValueObject
+class MyApiSync extends RepoValueObject
 {
     public function targetModel(): string
     {
-        return ModelDestino::class;
+        return TargetModel::class;
     }
 
     public function getAll(): iterable
     {
-        // Obtener datos desde API, archivo, otra DB, etc.
-        return ApiExterna::getData();
+        // Pull data from an external API, file, another database, etc.
+        return ExternalApi::getData();
     }
 }
 ```
 
-### Registrar el grupo de sincronización
+### Registering a Sync Group
 
 ```php
 use Softelebyte\Synchronize\Base\Contracts\Row\GroupRowClass;
 use Softelebyte\Synchronize\Base\Contracts\Row\RowClass;
 
-class MiGrupoSincronizacion implements GroupRowClass
+class MySyncGroup implements GroupRowClass
 {
     public function groupRowClass(): array
     {
@@ -151,8 +151,8 @@ class MiGrupoSincronizacion implements GroupRowClass
                 public function rowClass(): array
                 {
                     return [
-                        MiSincronizacion::class,
-                        MiSincronizacionRepo::class,
+                        MySync::class,
+                        MyApiSync::class,
                     ];
                 }
             }
@@ -161,87 +161,85 @@ class MiGrupoSincronizacion implements GroupRowClass
 }
 ```
 
-Registrar en `config/synchronize.php`:
+Register in `config/synchronize.php`:
 
 ```php
-'default_group' => 'mi_grupo',
+'default_group' => 'my_group',
 'alias' => [
-    'mi_grupo' => MiGrupoSincronizacion::class,
+    'my_group' => MySyncGroup::class,
 ],
 ```
 
 ---
 
-## Configuración (`config/synchronize.php`)
+## Configuration (`config/synchronize.php`)
 
-| Clave | Variable de entorno | Descripción |
+| Key | Environment Variable | Description |
 |---|---|---|
-| `mysql_placeholder_max` | `MYSQL_PLACEHOLDER_MAX` | Máximo de placeholders por query (default: 65535) |
-| `active_table_etl_minimum_days` | `ACTIVE_TABLE_ETL_MINIMUM_DAYS` | Días mínimos antes de eliminar registros inactivos ETL (default: 30) |
-| `active_table_minimum_days` | `ACTIVE_TABLE_MINIMUM_DAYS` | Días mínimos antes de eliminar registros inactivos BE (default: 15) |
-| `error_email_receptor` | `ERROR_MAIL_RECEPTOR` | Email donde se envían notificaciones de error |
-| `maxLogQuery` | `MAX_LOG_QUERY` | Número máximo de logs por query (default: 1) |
+| `mysql_placeholder_max` | `MYSQL_PLACEHOLDER_MAX` | Max placeholders per query (default: 65535) |
+| `active_table_etl_minimum_days` | `ACTIVE_TABLE_ETL_MINIMUM_DAYS` | Days before deleting inactive ETL records (default: 30) |
+| `active_table_minimum_days` | `ACTIVE_TABLE_MINIMUM_DAYS` | Days before deleting inactive BE records (default: 15) |
+| `error_email_receptor` | `ERROR_MAIL_RECEPTOR` | Email address for error notifications |
+| `maxLogQuery` | `MAX_LOG_QUERY` | Max log entries per query (default: 1) |
 
 ---
 
-## Modelos base
+## Base Models
 
 ```php
-// Modelo con campo active_etl (sincronización ETL)
+// Model with active_etl field (ETL synchronization)
 use Softelebyte\Synchronize\Base\Models\BaseEtlModel;
 
-class MiModelo extends BaseEtlModel {}
+class MyModel extends BaseEtlModel {}
 
-// Modelo con campo active_be (sincronización backend)
+// Model with active_be field (backend synchronization)
 use Softelebyte\Synchronize\Base\Models\BaseModel;
 
-class MiModelo extends BaseModel {}
+class MyModel extends BaseModel {}
 ```
 
-Ambos aplican automáticamente un scope global que filtra registros inactivos.
+Both automatically apply a global scope that filters out inactive records.
 
 ---
 
-## Joins por relaciones (SoftelebyteJoins)
+## Relationship Joins (SoftelebyteJoins)
 
 ```php
-// En tu modelo, aplica el trait a través del Builder
 User::query()->joinSoftelebyte('posts')->get();
 User::query()->leftJoinSoftelebyte('posts.comments')->get();
 ```
 
 ---
 
-## Filtros de queries (QueryFilters)
+## Query Filters
 
 ```php
 use Softelebyte\QueryFilters\Filters\QueryFilter;
 
-class FiltroNombre extends QueryFilter
+class NameFilter extends QueryFilter
 {
-    public function nombre(string $valor): void
+    public function name(string $value): void
     {
-        $this->builder->where('nombre', 'like', "%$valor%");
+        $this->builder->where('name', 'like', "%$value%");
     }
 }
 ```
 
 ```php
-// En el modelo
 use Softelebyte\QueryFilters\Concerns\HasQueryFilters;
 
-class MiModelo extends Model
+class MyModel extends Model
 {
     use HasQueryFilters;
 }
 
-// En el controlador
-MiModelo::filter($request, [FiltroNombre::class])->get();
+// In the controller
+MyModel::filter($request, [NameFilter::class])->get();
 ```
 
 ---
 
-## Service Providers registrados automáticamente
+## Auto-Registered Service Providers
 
 - `Softelebyte\Synchronize\Base\Providers\SynchronizeDataServiceProvider`
 - `Softelebyte\Synchronize\Logs\Providers\LogServiceProvider`
@@ -252,6 +250,6 @@ MiModelo::filter($request, [FiltroNombre::class])->get();
 
 ---
 
-## Licencia
+## License
 
 MIT © Softelebyte
